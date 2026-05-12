@@ -16,12 +16,19 @@ async function addNewSession() {
     let topic;
     let duration;
 
+    let cancelEarly = false;
+
     try {
         topic = await ask('Enter Session Topic: ');
-        validateTopic(topic);
+        const exitEarly = validateTopic(topic);
+
+        if (exitEarly) {
+            console.log('\nExited\n');
+            return;
+        }
 
         duration = await ask('Enter Session Duration: ');
-        validateDuration(duration);
+        cancelEarly = validateDuration(duration);
 
     } catch(err) {
         console.log(err + ', Try Again');
@@ -30,10 +37,10 @@ async function addNewSession() {
         return;
     }
 
-    sessions.push([topic, duration]);
-
+    if (!cancelEarly) {
+        sessions.push([topic, duration]);
+    }
     displaySessions();
-    rl.close();
 }
 
 function validateTopic(topic) {
@@ -43,6 +50,11 @@ function validateTopic(topic) {
     if (topic.trim() === '') { 
         throw new Error('Topic must not be empty');
     }
+
+    if (topic.toLowerCase() === 'exit') {
+        rl.close();
+        return true;
+    }
 }
 
 function validateDuration(duration) {
@@ -50,6 +62,10 @@ function validateDuration(duration) {
     // DURATION: MUST NOT BE NON-POSITIVE NUMBER, MUST NOT USE INCORRECT MEASUREMENT
 
     if (duration === '') { throw new Error('Duration must not be empty'); }
+
+    if (duration.toLowerCase() === 'cancel') {
+        return true;
+    }
 
     const validMeasurements = ['h', 'm'];
 
@@ -94,6 +110,8 @@ function displaySessions() {
     const hours = Math.floor(totalDuration / 60);
     const mins = totalDuration - (hours * 60);
     console.log(`Total Duration: ${hours}h${mins}m, ${totalDuration}minutes\n`);
+
+    addNewSession();
 }
 
 addNewSession();
