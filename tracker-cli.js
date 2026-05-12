@@ -13,19 +13,26 @@ function ask(q) {
 }
 
 async function addNewSession() {
-    let minutes;
+    let topic;
+    let duration;
 
     try {
-        const topic = await ask('Enter Session Topic: ');
+        topic = await ask('Enter Session Topic: ');
         validateTopic(topic);
 
-        const duration = await ask('Enter Session Duration: ');
-        minutes = validateDuration(duration);
+        duration = await ask('Enter Session Duration: ');
+        validateDuration(duration);
 
     } catch(err) {
         console.log(err + ', Try Again');
+
+        addNewSession();
+        return;
     }
 
+    const newSession = sessions.push([topic, duration]);
+
+    displaySessions();
     rl.close();
 }
 
@@ -41,6 +48,8 @@ function validateTopic(topic) {
 function validateDuration(duration) {
     // VALIDATE
     // DURATION: MUST NOT BE NON-POSITIVE NUMBER, MUST NOT USE INCORRECT MEASUREMENT
+
+    if (duration === '') { throw new Error('Duration must not be empty'); }
 
     const validMeasurements = ['h', 'm'];
 
@@ -58,6 +67,18 @@ function validateDuration(duration) {
             throw new Error('Number must be a positive value');
         }  
     }
+}
+
+function displaySessions() {
+    // IMPROVE VISUALS
+    let table = '|==SESSIONS==|\n';
+
+    for (let [topic, duration] of sessions) {
+        const newString = topic.padEnd(15) + duration;
+        table += newString + '\n';
+    }
+
+    console.log(table);
 }
 
 addNewSession();
