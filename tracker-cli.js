@@ -1,4 +1,4 @@
-let totalDuration;
+let totalDuration = 0;
 const sessions = [];
 
 import readline from 'readline';
@@ -30,7 +30,7 @@ async function addNewSession() {
         return;
     }
 
-    const newSession = sessions.push([topic, duration]);
+    sessions.push([topic, duration]);
 
     displaySessions();
     rl.close();
@@ -66,12 +66,24 @@ function validateDuration(duration) {
         if (number <= 0) {
             throw new Error('Number must be a positive value');
         }  
+        incrementTotalDuration(number, segment[segment.length - 1]);
+    }
+}
+
+function incrementTotalDuration(incrementValue, measurement) {
+    switch (measurement) {
+        case "h":
+            totalDuration += (incrementValue * 60);
+            break;
+        case "m":
+            totalDuration += incrementValue;
+            break;
     }
 }
 
 function displaySessions() {
     // IMPROVE VISUALS
-    let table = '|==SESSIONS==|\n';
+    let table = '\n|==SESSIONS==|\n';
 
     for (let [topic, duration] of sessions) {
         const newString = topic.padEnd(15) + duration;
@@ -79,6 +91,9 @@ function displaySessions() {
     }
 
     console.log(table);
+    const hours = Math.floor(totalDuration / 60);
+    const mins = totalDuration - (hours * 60);
+    console.log(`Total Duration: ${hours}h${mins}m, ${totalDuration}minutes\n`);
 }
 
 addNewSession();
