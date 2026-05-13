@@ -1,7 +1,15 @@
+import readline from 'readline';
+import stringWidth from 'string-width';
+import { setSectionHeading, setTopicTitle, setDurationTitle, 
+    setTotalDurationTitle } from './logger.js';
+
+function padChalk(text, length) {
+    const visibleLength = stringWidth(text);
+    return text + ' '.repeat(length - visibleLength);
+}
+
 let totalDuration = 0;
 const sessions = [];
-
-import readline from 'readline';
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -99,17 +107,22 @@ function incrementTotalDuration(incrementValue, measurement) {
 
 function displaySessions() {
     // IMPROVE VISUALS
-    let table = '\n|==SESSIONS==|\n';
+    let table = setSectionHeading('Sessions');
 
     for (let [topic, duration] of sessions) {
-        const newString = topic.padEnd(15) + duration;
+        const topicTitle = padChalk(setTopicTitle(topic), 14);
+        const durationTitle = padChalk(setDurationTitle(duration), 14);
+        const newString = topicTitle + durationTitle;
+
         table += newString + '\n';
     }
 
     console.log(table);
     const hours = Math.floor(totalDuration / 60);
     const mins = totalDuration - (hours * 60);
-    console.log(`Total Duration: ${hours}h${mins}m, ${totalDuration}minutes\n`);
+    const totalDurationTitle = setTotalDurationTitle('Total Duration:');
+    const totalDurationNumberTitle = setDurationTitle(`${hours}h${mins}m`)
+    console.log(`${totalDurationTitle} ${totalDurationNumberTitle}\n`);
 
     addNewSession();
 }
