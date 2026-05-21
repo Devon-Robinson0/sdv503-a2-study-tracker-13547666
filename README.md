@@ -21,6 +21,7 @@ IMPORTANT: PLEASE READ:
 ## Validation:
 - The tracker will NOT accept an empty topic OR one with just whitespace ' '
 - The tracker will ONLT accept a number followed by a measurement symbol like '60m' or '1h'
+- The number in each must be positive
 - VALID MEASUREMENT SYMBOLS ARE 'h' and 'm' - Case does not matter - 'H' and 'M' will work fine
 - The tracker accepts segments seperated by ':' EG. '4h:20m' will work and be translated to minutes for calculations
 - As long as each segment is valid you can change as many as you like in any order like '50m:2h:5m:20m:3h'

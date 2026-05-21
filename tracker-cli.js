@@ -77,7 +77,7 @@ function validateDuration(duration) {
     // VALIDATE
     // DURATION: MUST NOT BE NON-POSITIVE NUMBER, MUST NOT USE INCORRECT MEASUREMENT
 
-    if (duration === '') { throw new Error('Duration must not be empty'); }
+    if (duration.trim() === '') { throw new Error('Duration must not be empty'); }
 
     if (duration.toLowerCase() === 'cancel') {
         return true;
