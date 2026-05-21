@@ -1,15 +1,20 @@
 import readline from 'readline';
 import stringWidth from 'string-width';
-import { setSectionHeading, setTopicTitle, setDurationTitle, 
-    setTotalDurationTitle } from './logger.js';
+import { getSectionHeading, getTopicTitle, getDurationTitle, 
+    getTotalDurationTitle, getUserInputText, getErrorText } from './logger.js';
 
 function padChalk(text, length) {
     const visibleLength = stringWidth(text);
+    if (visibleLength > length) {
+        length = visibleLength + 1;
+    }
     return text + ' '.repeat(length - visibleLength);
 }
 
 let totalDuration = 0;
 const sessions = [];
+
+let tablePadding = 14;
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -27,7 +32,8 @@ async function addNewSession() {
     let cancelEarly = false;
 
     try {
-        topic = await ask('Enter Session Topic: ');
+        const topicText = getUserInputText('Enter Session Topic: ');
+        topic = await ask(topicText);
         const exitEarly = validateTopic(topic);
 
         if (exitEarly) {
@@ -35,11 +41,13 @@ async function addNewSession() {
             return;
         }
 
-        duration = await ask('Enter Session Duration: ');
+        const durationText = getUserInputText('Enter Session Duration: ');
+        duration = await ask(durationText);
         cancelEarly = validateDuration(duration);
 
     } catch(err) {
-        console.log(err + ', Try Again');
+        const errorText = getErrorText(err + ', Try Again');
+        console.log(errorText);
 
         addNewSession();
         return;
@@ -107,11 +115,11 @@ function incrementTotalDuration(incrementValue, measurement) {
 
 function displaySessions() {
     // IMPROVE VISUALS
-    let table = setSectionHeading('Sessions');
+    let table = getSectionHeading('Sessions');
 
     for (let [topic, duration] of sessions) {
-        const topicTitle = padChalk(setTopicTitle(topic), 14);
-        const durationTitle = padChalk(setDurationTitle(duration), 14);
+        const topicTitle = padChalk(getTopicTitle(topic), tablePadding);
+        const durationTitle = padChalk(getDurationTitle(duration), tablePadding);
         const newString = topicTitle + durationTitle;
 
         table += newString + '\n';
@@ -120,8 +128,8 @@ function displaySessions() {
     console.log(table);
     const hours = Math.floor(totalDuration / 60);
     const mins = totalDuration - (hours * 60);
-    const totalDurationTitle = setTotalDurationTitle('Total Duration:');
-    const totalDurationNumberTitle = setDurationTitle(`${hours}h${mins}m`)
+    const totalDurationTitle = getTotalDurationTitle('Total Duration:');
+    const totalDurationNumberTitle = getDurationTitle(`${hours}h${mins}m`)
     console.log(`${totalDurationTitle} ${totalDurationNumberTitle}\n`);
 
     addNewSession();
