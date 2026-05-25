@@ -135,14 +135,14 @@ function getMinutesInHours(minutes) {
 }
 
 function displaySessions() {
-    // IMPROVE VISUALS
-    let table = getSectionHeading('Sessions');
-
     sessions.forEach((session) => {
         if (session[0].length > tablePadding) {
             tablePadding = session[0].length + 2;
         }
-    })
+    });
+
+    const spacerValue = Math.floor((tablePadding - 14) / 2);
+    let table = getSectionHeading('Sessions', spacerValue);
 
     for (let [topic, duration] of sessions) {
         const topicTitle = padChalk(getTopicTitleText(topic.trim()), tablePadding);

@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
-export function getSectionHeading(text) {
-    return chalk.bold.bgGray.whiteBright(`\n----|${text}|----\n`);
+export function getSectionHeading(text, spacerValue) {
+    return chalk.bold.bgGray.whiteBright(`\n${' '.repeat(spacerValue)}----|${text}|----\n`);
 }
 
 export function getTopicTitleText(text) {

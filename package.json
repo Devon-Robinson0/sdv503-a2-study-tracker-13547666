@@ -4,7 +4,8 @@
   "description": "Repository for my SDV503 Assessment Two. Designing a console line study tracker",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tracker": "node src/tracker-cli.js"
   },
   "repository": {
     "type": "git",

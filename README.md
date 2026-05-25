@@ -12,7 +12,7 @@ IMPORTANT: PLEASE READ:
 
 
 ## Recieving Input
-- To start type 'node src/tracker-cli.js' in the console which will run the app
+- To start type 'npm run tracker' or 'node src/tracker-cli.js' in the console which will run the app
 - You will then be prompted for a topic name, type something then press enter
 - You will then be prompted for a session duration, type a number followed by a measurement then press enter
 - EG. topic = "afternoon study", duration = 4h:20m
