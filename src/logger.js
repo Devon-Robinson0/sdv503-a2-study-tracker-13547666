@@ -1,18 +1,18 @@
 import chalk from 'chalk';
 
 export function getSectionHeading(text) {
-    return chalk.bold.bgGray.whiteBright(`\n=+=|${text}|=+=\n`);
+    return chalk.bold.bgGray.whiteBright(`\n----|${text}|----\n`);
 }
 
-export function getTopicTitle(text) {
+export function getTopicTitleText(text) {
     return chalk.bold.redBright(text);
 }
 
-export function getDurationTitle(text) {
+export function getDurationText(text) {
     return chalk.dim(text);
 }
 
-export function getTotalDurationTitle(text) {
+export function getTotalDurationText(text) {
     return chalk.bold.magentaBright(text);
 }
 

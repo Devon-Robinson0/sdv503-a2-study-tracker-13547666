@@ -1,14 +1,14 @@
 import readline from 'readline';
 import stringWidth from 'string-width';
-import { getSectionHeading, getTopicTitle, getDurationTitle, 
-    getTotalDurationTitle, getUserInputText, getErrorText } from './logger.js';
+import { getSectionHeading, getTopicTitleText, getDurationText, 
+    getTotalDurationText, getUserInputText, getErrorText } from './logger.js';
 
 function padChalk(text, length) {
     const visibleLength = stringWidth(text);
     if (visibleLength > length) {
-        length = visibleLength + 1;
+        length = visibleLength + 2;
     }
-    return text + ' '.repeat(length - visibleLength);
+    return text + getDurationText('·'.repeat(length - visibleLength));
 }
 
 let totalDuration = 0;
@@ -53,8 +53,18 @@ async function addNewSession() {
         return;
     }
 
+    let durationMinutes = 0;
+    const segments = duration.split(':');
+    for (let i = 0; i < segments.length; i++) {
+        const segment = segments[i];
+        const value = Number(segment.slice(0, segment.length - 1));
+        const measurement = segment[segment.length - 1];
+        durationMinutes += getDurationInMinutes(value, measurement);
+    }
+    totalDuration += durationMinutes;
+
     if (!cancelEarly) {
-        sessions.push([topic, duration]);
+        sessions.push([topic, durationMinutes]);
     }
     displaySessions();
 }
@@ -95,42 +105,59 @@ function validateDuration(duration) {
         if (Number.isNaN(number)) {
             throw new Error('Ensure correct formatting is used e.g. 4h:20m, 20m');
         }
+        if (!Number.isInteger(number)) {
+            throw new Error('Number must be an interger');
+        }
         if (number <= 0) {
             throw new Error('Number must be a positive value');
         }  
-        incrementTotalDuration(number, segment[segment.length - 1]);
     }
 }
 
-function incrementTotalDuration(incrementValue, measurement) {
-    switch (measurement) {
+function getDurationInMinutes(incrementValue, measurement) {
+    let minutes = 0;
+    switch (measurement.toLowerCase()) {
         case "h":
-            totalDuration += (incrementValue * 60);
+            minutes += (incrementValue * 60);
             break;
         case "m":
-            totalDuration += incrementValue;
+            minutes += incrementValue;
             break;
     }
+    return minutes;
+}
+
+function getMinutesInHours(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes - (hours * 60);
+
+    return `${hours}h${mins}m`;
 }
 
 function displaySessions() {
     // IMPROVE VISUALS
     let table = getSectionHeading('Sessions');
 
+    sessions.forEach((session) => {
+        if (session[0].length > tablePadding) {
+            tablePadding = session[0].length + 2;
+        }
+    })
+
     for (let [topic, duration] of sessions) {
-        const topicTitle = padChalk(getTopicTitle(topic), tablePadding);
-        const durationTitle = padChalk(getDurationTitle(duration), tablePadding);
-        const newString = topicTitle + durationTitle;
+        const topicTitle = padChalk(getTopicTitleText(topic.trim()), tablePadding);
+
+        const durationText = getDurationText(getMinutesInHours(duration));
+        const newString = topicTitle + durationText;
 
         table += newString + '\n';
     }
 
     console.log(table);
-    const hours = Math.floor(totalDuration / 60);
-    const mins = totalDuration - (hours * 60);
-    const totalDurationTitle = getTotalDurationTitle('Total Duration:');
-    const totalDurationNumberTitle = getDurationTitle(`${hours}h${mins}m`)
-    console.log(`${totalDurationTitle} ${totalDurationNumberTitle}\n`);
+    const totalDurationText = getMinutesInHours(totalDuration);
+    const totalDurationTitle = getTotalDurationText('Total Duration:');
+    const totalDurationNumberText = getDurationText(`${totalDurationText} (${totalDuration}m)`);
+    console.log(`${totalDurationTitle} ${totalDurationNumberText}\n`);
 
     addNewSession();
 }
